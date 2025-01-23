@@ -168,6 +168,18 @@ readTimeout:  1
 deathTimeout: 5
 </pre>
 
+For running on https it might looks as follows:
+<pre>
+    boundHost:    0.0.0.0 
+    httpPort:     8082
+    reuseAddr:    true
+    readTimeout:  1
+    deathTimeout: 5
+    https:        true
+    httpsKey: your_ssl.key
+    httpsCert: your_ssl.cert
+</pre>
+
 <p>Command-line options override the options specified in the
 <tt>~/.weinre/server.properties</tt> file.
 

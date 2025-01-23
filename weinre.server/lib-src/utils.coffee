@@ -180,11 +180,13 @@ Error.prepareStackTrace = (error, structuredStackTrace) ->
         file = utils.alignRight(file, longestFile)
         line = utils.alignLeft( line, longestLine)
         
-        funcName = func.displayName ||
-                   func.name || 
-                   callSite.getFunctionName()
-                   callSite.getMethodName()
-                   '???'
+        funcName = '???'
+        if func != undefined 
+            funcName = func.displayName ||
+                       func.name ||
+                       callSite.getFunctionName()
+                       callSite.getMethodName()
+                       '???'
         
         if funcName == "Module._compile"
             result.pop()

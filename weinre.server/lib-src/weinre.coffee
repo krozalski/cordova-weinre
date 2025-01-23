@@ -21,6 +21,7 @@ fs   = require 'fs'
 net  = require 'net'
 dns  = require 'dns'
 path = require 'path'
+https = require 'https'
 
 _       = require 'underscore'
 express = require 'express'
@@ -80,6 +81,11 @@ processOptions = (options, cb) ->
     utils.logVerbose "   debug:        #{options.debug}"
     utils.logVerbose "   readTimeout:  #{options.readTimeout}"
     utils.logVerbose "   deathTimeout: #{options.deathTimeout}"
+    utils.logVerbose "   https: #{options.https}"
+    if options.https == 'true'
+        utils.logVerbose "   httpsKey: #{options.httpsKey}"
+        utils.logVerbose "   httpsCert: #{options.httpsCert}"
+
 
     utils.setOptions options
 
@@ -128,8 +134,16 @@ startServer = () ->
     staticCacheOptions =
         maxObjects: 500
         maxLength:  32 * 1024 * 1024
-        
-    app = express.createServer()
+
+    if options.https == 'true'
+        httpsOptions = {
+        key: fs.readFileSync(options.httpsKey),
+        cert: fs.readFileSync(options.httpsCert)
+        };
+        app = express.createServer(httpsOptions);
+    else
+        app = express.createServer()
+
     
     app.on 'error', (error) ->
         utils.exit "error running server: #{error}"
@@ -157,12 +171,14 @@ startServer = () ->
     app.use express.staticCache(staticCacheOptions)
     app.use express.static(options.staticWebDir)
     
+    protocol = options.https == 'true' ? 'http' : 'https'
+
     if options.boundHost == '-all-'
         utils.log "starting server at http://localhost:#{options.httpPort}"
         app.listen options.httpPort
         
     else
-        utils.log "starting server at http://#{options.boundHost}:#{options.httpPort}"
+        utils.log "starting server at #{protocol}://#{options.boundHost}:#{options.httpPort}"
         app.listen options.httpPort, options.boundHost
 
 #-------------------------------------------------------------------------------

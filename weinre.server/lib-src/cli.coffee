@@ -32,6 +32,7 @@ optionDefaults =
     verbose:      false
     debug:        false
     readTimeout:  5
+    https:        false
 
 #-------------------------------------------------------------------------------
 exports.run = ->
