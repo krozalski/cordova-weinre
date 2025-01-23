@@ -22,7 +22,7 @@
 import os
 import re
 import sys
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import xml.dom
 import xml.dom.minidom
 
@@ -32,45 +32,45 @@ URL = "https://issues.apache.org/jira/sr/jira.issueviews:searchrequest-xml/temp/
 
 #-------------------------------------------------------------------------------
 def main():
-    iFile = urllib2.urlopen(URL)
+    iFile = urllib.request.urlopen(URL)
     contents = iFile.read()
     iFile.close()
-    
+
     dom = xml.dom.minidom.parseString(contents)
     items = dom.getElementsByTagName("item")
-    
+
     for item in items:
         title = getText(item, "title").strip()
         link  = getText(item, "link").strip()
         key   = getText(item, "key").strip()
-        
-        
+
+
         title = re.sub(r'^\[.*?\]',"",title,1).strip()
         title = re.sub(r'^\[.*?\]',"",title,1).strip()
-        
-        print '<li><a href="%s">%s</a>  - %s' % (link, key, title)
-    
+
+        print('<li><a href="%s">%s</a>  - %s' % (link, key, title))
+
 #-------------------------------------------------------------------------------
 def getText(element, childTag=None):
     result = []
-    
+
     if None == childTag:
         elements = element.childNodes
     else:
         elements = element.getElementsByTagName(childTag)
-    
+
     for element in elements:
         if element.nodeType == Node.TEXT_NODE:          result.append(element.data)
         if element.nodeType == Node.CDATA_SECTION_NODE: result.append(element.data)
         if element.nodeType == Node.ENTITY_NODE:        result.append(element.nodeValue)
         if element.nodeType == Node.ELEMENT_NODE:       result.append(getText(element))
-            
+
     return "".join(result)
 
 #-------------------------------------------------------------------------------
 def log(message):
     message = "%s: %s" % (PROGRAM_NAME, message)
-    print >>sys.stderr, message
+    print(message, file=sys.stderr)
 
 #-------------------------------------------------------------------------------
 def error(message):
@@ -81,3 +81,4 @@ def error(message):
 PROGRAM_NAME = os.path.basename(sys.argv[0])
 
 main()
+
