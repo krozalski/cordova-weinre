@@ -135,7 +135,12 @@ WebInspector.ResourceHeadersView.prototype = {
     {
         this._requestPayloadTreeElement.removeChildren();
 
-        var title = "<div class=\"raw-form-data header-value source-code\">" + formData.escapeHTML() + "</div>";
+        var stringData = "";
+        if (typeof formData !== "string")
+            stringData = JSON.stringify(formData).escapeHTML();
+        else
+            stringData = formData.escapeHTML();
+        var title = "<div class=\"raw-form-data header-value source-code\">" + stringData + "</div>";
         var parmTreeElement = new TreeElement(null, null, false);
         parmTreeElement.titleHTML = title;
         parmTreeElement.selectable = false;
